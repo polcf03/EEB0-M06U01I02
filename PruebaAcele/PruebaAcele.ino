@@ -47,7 +47,7 @@ void setup() {
   lcd.begin(16, 2);              // Inicializar el LCD
   Serial.begin(38400);
 
-  Timer1.initialize(50); // 50ms.
+  Timer1.initialize(50000); // 50ms.
   Timer1.attachInterrupt(Count);
 
 
@@ -66,52 +66,71 @@ void loop() {
 
   accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
+  
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("CNT");
+  lcd.setCursor(0, 0);
+  lcd.print(cntShow);
 
 
-  Serial.print("a/g:\t");
-  Serial.print("x"); Serial.print(" : ");
-  Serial.print(ax); Serial.print("\t");
-  Serial.print("Y"); Serial.print(" : ");
-  Serial.print(ay); Serial.print("\t");
-  Serial.print("Z"); Serial.print(" : ");
-  Serial.println(az);
-  /*Serial.print(az); Serial.print("\t");
+
+  /*Serial.print("Prueba 0: \t");
+    Serial.print("x"); Serial.print(" : ");
+    Serial.print(ax); Serial.print("\t");
+    Serial.print("Y"); Serial.print(" : ");
+    Serial.print(ay); Serial.print("\t");
+    Serial.print("Z"); Serial.print(" : ");
+    Serial.println(az);*/
+  /*Serial.print(az); Serial.print("\t");º
     Serial.print(gx); Serial.print("\t");
     Serial.print(gy); Serial.print("\t");
     Serial.println(gz);*/
 
 
 
-  /*if (ax < -1500)
+  /*if (averageX < -1500)
     {
     // Derecha
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Derecha");
+    averageX = 0;
+    averageY = 0;
+    averageZ = 0;
     }
 
-    else if (az > 1600)
+    else if (averageZ > 1600)
     {
     // Arriba
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Arriba");
+    averageX = 0;
+    averageY = 0;
+    averageZ = 0;
     }
 
-    else if (az < -1500)
+    else if (averageZ < -1500)
     {
     // Abajo
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Abajo");
+    averageX = 0;
+    averageY = 0;
+    averageZ = 0;
     }
 
-    else if (ax > 1600)
+    else if (averageX > 1600)
     {
     // Izquierda
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Izquierda");
+    averageX = 0;
+    averageY = 0;
+    averageZ = 0;
     }*/
 
   blinkState = !blinkState;
@@ -139,6 +158,20 @@ void Count(void)
   meanPos[i].posX = ax;
   meanPos[i].posY = ay;
   meanPos[i].posZ = az;
+  Serial.print("Prueba 1: \t");
+    Serial.print("x"); Serial.print(" : ");
+    Serial.print(ax); Serial.print("\t");
+    Serial.print("Y"); Serial.print(" : ");
+    Serial.print(ay); Serial.print("\t");
+    Serial.print("Z"); Serial.print(" : ");
+    Serial.println(az);
+    Serial.print("Prueba 2: \t");
+    Serial.print("x"); Serial.print(" : ");
+    Serial.print(meanPos[i].posX); Serial.print("\t");
+    Serial.print("Y"); Serial.print(" : ");
+    Serial.print(meanPos[i].posY); Serial.print("\t");
+    Serial.print("Z"); Serial.print(" : ");
+    Serial.println(meanPos[i].posZ); 
 
   if (i <= longArray - 1)
   {
@@ -158,12 +191,21 @@ void Count(void)
     //Serial.print("if");
     for (int index = 0; index <= longArray - 1; index++)
     {
-      averageX += meanPos[index].posX;
-      averageY += meanPos[index].posY;
-      averageZ += meanPos[index].posZ;
+
+      averageX = averageX + meanPos[index].posX;
+      averageY = averageY + meanPos[index].posY;
+      averageZ = averageZ + meanPos[index].posZ;
       meanPos[index].posX = 0;
       meanPos[index].posY = 0;
       meanPos[index].posZ = 0;
+      Serial.print("Prueba 5: \t");
+    Serial.print("X : ");
+    Serial.print(averageX); Serial.print("\t");
+    Serial.print("Y : ");
+    Serial.print(averageY); Serial.print("\t");
+    Serial.print("Z : ");
+    Serial.println(averageZ);
+    Serial.println(cntShow);
 
       //Serial.println("Array");
 
@@ -172,11 +214,17 @@ void Count(void)
     averageY = averageY / longArray;
     averageZ = averageZ / longArray;
 
-    /*Serial.print("a/g:\t");
-      Serial.print(averageX); Serial.print("\t");
-      Serial.print(averageY); Serial.print("\t");
-      Serial.println(averageZ);
-      Serial.println(cntShow);*/
+    /*Serial.print("Prueba 5: \t");
+    Serial.print("X : ");
+    Serial.print(averageX); Serial.print("\t");
+    Serial.print("Y : ");
+    Serial.print(averageY); Serial.print("\t");
+    Serial.print("Z : ");
+    Serial.println(averageZ);
+    Serial.println(cntShow);*/
+    averageX = 0;
+    averageY = 0;
+    averageZ = 0;
 
 
 
