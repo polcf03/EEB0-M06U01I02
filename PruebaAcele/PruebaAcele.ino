@@ -14,30 +14,36 @@ int16_t ax, ay, az;
 int16_t gx, gy, gz;
 
 
-/*    Array   */
-#define longArray       20
 
-struct takePos {
+/*    Array   */
+
+
+/*struct takePos {
   int posX;
   int posY;
   int posZ;
-};
+  };
 
-takePos meanPos [longArray];
+  takePos meanPos [longArray];*/
 
 /*    Captacion de posicion     */
 int i = 0;
 
 /*         Timer         */
 void Count(void);
-int cntTake = 0;
 int cntShow = 0;
+#define    timeTimer   50000
+
 
 /*    Posicion    */
+#define  iteration 20
 
-int averageX = 0;
-int averageY = 0;
-int averageZ = 0;
+int16_t averageX = 0;
+int16_t averageY = 0;
+int16_t averageZ = 0;
+
+void chooseFace(int posDice);
+
 
 #define LED_PIN 13
 bool blinkState = false;
@@ -47,7 +53,7 @@ void setup() {
   lcd.begin(16, 2);              // Inicializar el LCD
   Serial.begin(38400);
 
-  Timer1.initialize(50000); // 50ms.
+  Timer1.initialize(timeTimer); // 50ms.
   Timer1.attachInterrupt(Count);
 
 
@@ -66,7 +72,7 @@ void loop() {
 
   accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-  
+
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("CNT");
@@ -75,130 +81,82 @@ void loop() {
 
 
 
-  /*Serial.print("Prueba 0: \t");
-    Serial.print("x"); Serial.print(" : ");
-    Serial.print(ax); Serial.print("\t");
-    Serial.print("Y"); Serial.print(" : ");
-    Serial.print(ay); Serial.print("\t");
-    Serial.print("Z"); Serial.print(" : ");
-    Serial.println(az);*/
-  /*Serial.print(az); Serial.print("\t");º
-    Serial.print(gx); Serial.print("\t");
-    Serial.print(gy); Serial.print("\t");
-    Serial.println(gz);*/
-
-
-
-  /*if (averageX < -1500)
-    {
-    // Derecha
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Derecha");
-    averageX = 0;
-    averageY = 0;
-    averageZ = 0;
-    }
-
-    else if (averageZ > 1600)
-    {
-    // Arriba
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Arriba");
-    averageX = 0;
-    averageY = 0;
-    averageZ = 0;
-    }
-
-    else if (averageZ < -1500)
-    {
-    // Abajo
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Abajo");
-    averageX = 0;
-    averageY = 0;
-    averageZ = 0;
-    }
-
-    else if (averageX > 1600)
-    {
-    // Izquierda
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Izquierda");
-    averageX = 0;
-    averageY = 0;
-    averageZ = 0;
-    }*/
 
   blinkState = !blinkState;
   digitalWrite(LED_PIN, blinkState);
 }
 
-/*void takeInfo()
+void chooseFace()
+{
+  if ()
   {
 
+  }
+  else if ()
+  {
 
+  }
+  else if ()
+  {
 
-  meanPos[i].posX = ax;
-  meanPos[i].posY = ay;
-  meanPos[i].posZ = az;
+  }
+  else if ()
+  {
+
+  }
+  else if ()
+  {
+
+  }
+  else if ()
+  {
+
+  }
+
   Serial.print("Hola/");
-  }*/
+}
 
 /*                Count Timer             */
 void Count(void)
 {
+
   cntShow++;
-
-  //Serial.println("Toy aqui");
   //accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-  meanPos[i].posX = ax;
-  meanPos[i].posY = ay;
-  meanPos[i].posZ = az;
-  Serial.print("Prueba 1: \t");
-    Serial.print("x"); Serial.print(" : ");
-    Serial.print(ax); Serial.print("\t");
-    Serial.print("Y"); Serial.print(" : ");
-    Serial.print(ay); Serial.print("\t");
-    Serial.print("Z"); Serial.print(" : ");
-    Serial.println(az);
-    Serial.print("Prueba 2: \t");
-    Serial.print("x"); Serial.print(" : ");
-    Serial.print(meanPos[i].posX); Serial.print("\t");
-    Serial.print("Y"); Serial.print(" : ");
-    Serial.print(meanPos[i].posY); Serial.print("\t");
-    Serial.print("Z"); Serial.print(" : ");
-    Serial.println(meanPos[i].posZ); 
+  //meanPos[i].posX = ax / 100;
+  //meanPos[i].posY = ay / 100;
+  //meanPos[i].posZ = az / 100;
+  averageX = ((averageX * i + (ax / 100)) / (i + 1));
+  averageY = ((averageY * i + (ay / 100)) / (i + 1));
+  averageZ = ((averageZ * i + (az / 100)) / (i + 1));
 
-  if (i <= longArray - 1)
+  if (i <= iteration - 1)
   {
     i++;
-    //Serial.println("++");
   }
   else
   {
     i = 0;
-    //Serial.println("0");
   }
 
-  //Serial.print("Hola/");
 
-  if (cntShow >= longArray)
+
+  if (cntShow >= iteration)
   {
-    //Serial.print("if");
-    for (int index = 0; index <= longArray - 1; index++)
-    {
-
+    /*for (int index = 0; index <= longArray - 1; index++)
+      {
       averageX = averageX + meanPos[index].posX;
       averageY = averageY + meanPos[index].posY;
       averageZ = averageZ + meanPos[index].posZ;
       meanPos[index].posX = 0;
       meanPos[index].posY = 0;
       meanPos[index].posZ = 0;
-      Serial.print("Prueba 5: \t");
+      }
+
+      /*averageX = averageX / longArray;
+      averageY = averageY / longArray;
+      averageZ = averageZ / longArray;*/
+
+    Serial.print("Prueba 5: \t");
     Serial.print("X : ");
     Serial.print(averageX); Serial.print("\t");
     Serial.print("Y : ");
@@ -206,27 +164,10 @@ void Count(void)
     Serial.print("Z : ");
     Serial.println(averageZ);
     Serial.println(cntShow);
-
-      //Serial.println("Array");
-
-    }
-    averageX = averageX / longArray;
-    averageY = averageY / longArray;
-    averageZ = averageZ / longArray;
-
-    /*Serial.print("Prueba 5: \t");
-    Serial.print("X : ");
-    Serial.print(averageX); Serial.print("\t");
-    Serial.print("Y : ");
-    Serial.print(averageY); Serial.print("\t");
-    Serial.print("Z : ");
-    Serial.println(averageZ);
-    Serial.println(cntShow);*/
+    chooseFace();
     averageX = 0;
     averageY = 0;
     averageZ = 0;
-
-
 
     cntShow = 0;
   }
