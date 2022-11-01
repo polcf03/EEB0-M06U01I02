@@ -8,6 +8,12 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 #define SERIE_DELAY       25
 
+#define UNO       1
+#define DOS       2
+#define TRES      3
+#define CUATRO    4
+#define CINCO     5
+#define SEIS      6
 MPU6050 accelgyro;
 
 int16_t ax, ay, az;
@@ -42,7 +48,10 @@ int16_t averageX = 0;
 int16_t averageY = 0;
 int16_t averageZ = 0;
 
-void chooseFace(int posDice);
+int chooseFace();
+
+int changeFace = 0;
+int posDice;
 
 
 #define LED_PIN 13
@@ -72,12 +81,80 @@ void loop() {
 
   accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
+  if (changeFace == posDice)
+  {
+  }
+  else {
 
-  lcd.clear();
-  lcd.setCursor(2, 0);
-  lcd.print("CNT");
-  lcd.setCursor(0, 0);
-  lcd.print(cntShow);
+    switch (posDice) {
+      case UNO:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La UNO '1'");
+
+        changeFace = posDice;
+        break;
+
+      case DOS:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La DOS '2'");
+
+        changeFace = posDice;
+        break;
+
+      case TRES:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La TRES '3'");
+
+        changeFace = posDice;
+        break;
+
+      case CUATRO:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La CUATRO '4'");
+
+        changeFace = posDice;
+        break;
+
+      case CINCO:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La CINCO '5'");
+
+        changeFace = posDice;
+        break;
+
+      case SEIS:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("La SEIS '6'");
+
+        changeFace = posDice;
+        break;
+
+      default:
+        // statements
+        break;
+    }
+  }
+
+
+
 
 
 
@@ -86,35 +163,45 @@ void loop() {
   digitalWrite(LED_PIN, blinkState);
 }
 
-void chooseFace()
+int chooseFace()
 {
-  if ()
-  {
 
-  }
-  else if ()
+  //1: X : 17 Y : -3  Z : 172
+  if (averageX >= 0 && averageY <= 0 && averageZ >= 100)
   {
-
-  }
-  else if ()
-  {
-
-  }
-  else if ()
-  {
-
-  }
-  else if ()
-  {
-
-  }
-  else if ()
-  {
-
+    return UNO;
   }
 
-  Serial.print("Hola/");
+  //2: X : -127 Y : 0 Z : 1
+  if (averageX <= -100 && averageY <= 0 && averageZ >= 0)
+  {
+    return DOS;
+  }
+
+  //3: X : 15 Y : -154  Z : 4
+  if (averageX >= 0 && averageY <= -100 && averageZ >= 0)
+  {
+    return TRES;
+  }
+
+  //4: X : 18  Y : 160 Z : 5
+  if (averageX >= 0 && averageY >= 100 && averageZ >= 0)
+  {
+    return CUATRO;
+  }
+
+  //5: x: 183 Y : -3  Z : 4
+  if (averageX >= 100 && averageY <= 0 && averageZ >= 0)
+  {
+    return CINCO;
+  }
+
+  //6: X : 13  Y : 0 Z : -142
+  if (averageX >= 0 && averageY <= 0 && averageZ <= -100) {
+    return SEIS;
+  }
 }
+
 
 /*                Count Timer             */
 void Count(void)
@@ -164,7 +251,7 @@ void Count(void)
     Serial.print("Z : ");
     Serial.println(averageZ);
     Serial.println(cntShow);
-    chooseFace();
+    posDice = chooseFace();
     averageX = 0;
     averageY = 0;
     averageZ = 0;
