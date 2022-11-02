@@ -14,6 +14,7 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 #define CUATRO    4
 #define CINCO     5
 #define SEIS      6
+#define OTRO      15
 MPU6050 accelgyro;
 
 int16_t ax, ay, az;
@@ -147,6 +148,16 @@ void loop() {
         changeFace = posDice;
         break;
 
+      case OTRO:
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("La cara es:");
+        lcd.setCursor(2, 1);
+        lcd.print("Ta borracho");
+
+        changeFace = posDice;
+        break;
+
       default:
         // statements
         break;
@@ -173,34 +184,41 @@ int chooseFace()
   }
 
   //2: X : -127 Y : 0 Z : 1
-  if (averageX <= -100 && averageY <= 0 && averageZ >= 0)
+  else if (averageX <= -100 && averageY <= 0 && averageZ >= 0)
   {
     return DOS;
   }
 
   //3: X : 15 Y : -154  Z : 4
-  if (averageX >= 0 && averageY <= -100 && averageZ >= 0)
+  else if (averageX >= 0 && averageY <= -100 && averageZ >= 0)
   {
     return TRES;
   }
 
   //4: X : 18  Y : 160 Z : 5
-  if (averageX >= 0 && averageY >= 100 && averageZ >= 0)
+  else if (averageX >= 0 && averageY >= 100 && averageZ >= 0)
   {
     return CUATRO;
   }
 
   //5: x: 183 Y : -3  Z : 4
-  if (averageX >= 100 && averageY <= 0 && averageZ >= 0)
+  else if (averageX >= 100 && averageY <= 0 && averageZ >= 0)
   {
     return CINCO;
   }
 
   //6: X : 13  Y : 0 Z : -142
-  if (averageX >= 0 && averageY <= 0 && averageZ <= -100) {
+  else if (averageX >= 0 && averageY <= 0 && averageZ <= -100)
+  {
     return SEIS;
   }
-}
+
+  else
+  {
+    return OTRO;
+  }
+
+}  
 
 
 /*                Count Timer             */
