@@ -8,19 +8,26 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 #define SERIE_DELAY       25
 
-#define UNO       1
-#define DOS       2
-#define TRES      3
-#define CUATRO    4
-#define CINCO     5
-#define SEIS      6
-#define OTRO      15
+/* Dinition of buttons */
+#define btnRIGHT  4
+#define btnUP     1
+#define btnDOWN   2
+#define btnLEFT   3
+#define btnSELECT 0
+#define btnNONE   10
 MPU6050 accelgyro;
 
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
 
+float offsetX, offsetY, offsetZ;
+float gravX, gravY, gravZ;
 
+float degreeX, degreeY, degreeZ;
+
+bool startMesure = false;
+
+int read_LCD_buttons();
 
 /*    Array   */
 
@@ -50,6 +57,8 @@ float averageY = 0;
 float averageZ = 0;
 
 int chooseFace();
+
+bool startMesure = false;
 
 int changeFace = 0;
 int posDice;
@@ -81,7 +90,27 @@ void setup() {
 void loop() {
 
   accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-  
+  gravX = ax / 1638.4;
+  gravY = ay / 1638.4;
+  gravZ = az / 1638.4;
+  switch (read_LCD_buttons())
+  {
+    case btnSELECT:
+      offsetX = gravX;
+      offsetY = gravY;
+      offsetZ = gravZ;
+      startMesure = true;
+      break;
+  }
+
+  if (startMesure)
+  {
+    if (offsetX = !gravX || offsetY = !gravY || offsetZ = !gravZ)
+    {
+      
+
+    }
+  }
 
   if (changeFace == posDice)
   {
@@ -177,9 +206,8 @@ void loop() {
 
 int chooseFace()
 {
-
   //1: X : 17 Y : -3  Z : 172
-  if (averageX >= 0 && averageY <= 0 && averageZ >= 100)
+  if (averageX >= 0 && averageY <= 0 && averageZ >= 9)
   {
     return UNO;
   }
@@ -220,27 +248,29 @@ int chooseFace()
     return OTRO;
   }
 
-}  
+}
 
 
 /*                Count Timer             */
 void Count(void)
 {
-/*Serial.print("Prueba 5: \t");
-    Serial.print("X : ");
-    Serial.print(ax); Serial.print("\t");
-    Serial.print("Y : ");
-    Serial.print(ay); Serial.print("\t");
-    Serial.print("Z : ");
-    Serial.println(az);*/
+  /*Serial.print("Prueba 5: \t");
+      Serial.print("X : ");
+      Serial.print(ax); Serial.print("\t");
+      Serial.print("Y : ");
+      Serial.print(ay); Serial.print("\t");
+      Serial.print("Z : ");
+      Serial.println(az);*/
   cntShow++;
   //accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
   //meanPos[i].posX = ax / 100;
   //meanPos[i].posY = ay / 100;
   //meanPos[i].posZ = az / 100;
-  averageX = ((averageX * i + (ax/1638.4 )) / (i + 1));
-  averageY = ((averageY * i + (ay/1638.4 )) / (i + 1));
-  averageZ = ((averageZ * i + (az/1638.4 )) / (i + 1));
+  averageX = ((averageX * i + (ax / 1638.4 )) / (i + 1));
+  averageY = ((averageY * i + (ay / 1638.4 )) / (i + 1));
+  averageZ = ((averageZ * i + (az / 1638.4 )) / (i + 1));
+
+
 
   if (i <= iteration - 1)
   {
@@ -275,7 +305,7 @@ void Count(void)
     Serial.print("Y : ");
     Serial.print(averageY); Serial.print(" m/s^2\t");
     Serial.print("Z : ");
-    Serial.print(averageZ);Serial.println(" m/s^2");
+    Serial.print(averageZ); Serial.println(" m/s^2");
     //Serial.println(cntShow);*/
     posDice = chooseFace();
     averageX = 0;
@@ -283,6 +313,48 @@ void Count(void)
     averageZ = 0;
 
     cntShow = 0;
+  }
+
+  int read_LCD_buttons()
+  {
+    adcKeyIn = analogRead(0);      // Leemos A0
+    //Serial.println (adcKeyIn);
+    if (!btPressed)
+    {
+      if (adcKeyIn < 10)
+      {
+        btPressed = true;
+        return btnRIGHT;
+      }
+      if (adcKeyIn < 150)
+      {
+        btPressed = true;
+        return btnUP;
+      }
+      if (adcKeyIn < 300)
+      {
+        btPressed = true;
+        return btnDOWN;
+      }
+      if (adcKeyIn < 450)
+      {
+        btPressed = true;
+        return btnLEFT;
+      }
+      if (adcKeyIn < 700)
+      {
+        btPressed = true;
+        return btnSELECT;
+      }
+    }
+
+    else if (adcKeyIn > 1000)
+    {
+      btPressed = false;
+
+    }
+
+    return btnNONE;  // in any other case
   }
 
 
