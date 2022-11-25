@@ -15,7 +15,18 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 #define btnLEFT   3
 #define btnSELECT 0
 #define btnNONE   10
+
+int adcKeyIn;
+bool btPressed;
 MPU6050 accelgyro;
+
+#define UNO   4
+#define DOS      1
+#define TRES   2
+#define CUATRO  3
+#define CINCO 0
+#define SEIS   10
+#define OTRO   11
 
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
@@ -58,7 +69,12 @@ float averageZ = 0;
 
 int chooseFace();
 
-bool startMesure = false;
+int calcOffsX();
+int calcOffsY();
+int calcOffsZ();
+
+
+
 
 int changeFace = 0;
 int posDice;
@@ -96,20 +112,20 @@ void loop() {
   switch (read_LCD_buttons())
   {
     case btnSELECT:
-      offsetX = gravX;
-      offsetY = gravY;
-      offsetZ = gravZ;
+      offsetX = asin(gravX / 9.81) + calcOffsX();
+      offsetY = asin(gravY / 9.81) + calcOffsY();
+      offsetZ = asin(gravZ / 9.81) + calcOffsZ();
       startMesure = true;
       break;
   }
 
   if (startMesure)
   {
-    if (offsetX = !gravX || offsetY = !gravY || offsetZ = !gravZ)
-    {
-      
+    /**if (offsetX = !gravX || offsetY = !gravY || offsetZ = !gravZ)
+      {
 
-    }
+
+      }*/
   }
 
   if (changeFace == posDice)
@@ -314,49 +330,105 @@ void Count(void)
 
     cntShow = 0;
   }
-
-  int read_LCD_buttons()
+}
+int read_LCD_buttons()
+{
+  adcKeyIn = analogRead(0);      // Leemos A0
+  //Serial.println (adcKeyIn);
+  if (!btPressed)
   {
-    adcKeyIn = analogRead(0);      // Leemos A0
-    //Serial.println (adcKeyIn);
-    if (!btPressed)
+    if (adcKeyIn < 10)
     {
-      if (adcKeyIn < 10)
-      {
-        btPressed = true;
-        return btnRIGHT;
-      }
-      if (adcKeyIn < 150)
-      {
-        btPressed = true;
-        return btnUP;
-      }
-      if (adcKeyIn < 300)
-      {
-        btPressed = true;
-        return btnDOWN;
-      }
-      if (adcKeyIn < 450)
-      {
-        btPressed = true;
-        return btnLEFT;
-      }
-      if (adcKeyIn < 700)
-      {
-        btPressed = true;
-        return btnSELECT;
-      }
+      btPressed = true;
+      return btnRIGHT;
     }
-
-    else if (adcKeyIn > 1000)
+    if (adcKeyIn < 150)
     {
-      btPressed = false;
-
+      btPressed = true;
+      return btnUP;
     }
-
-    return btnNONE;  // in any other case
+    if (adcKeyIn < 300)
+    {
+      btPressed = true;
+      return btnDOWN;
+    }
+    if (adcKeyIn < 450)
+    {
+      btPressed = true;
+      return btnLEFT;
+    }
+    if (adcKeyIn < 700)
+    {
+      btPressed = true;
+      return btnSELECT;
+    }
   }
 
+  else if (adcKeyIn > 1000)
+  {
+    btPressed = false;
 
+  }
 
+  return btnNONE;  // in any other case
+}
+
+int calcOffsX()
+{
+  if (gravZ > 0 && gravY > 0)
+  {
+    return 0;
+  }
+  else if (gravZ > 0 && gravY < 0)
+  {
+    return 90;
+  }
+  else if (gravZ < 0 && gravY < 0)
+  {
+    return 180;
+  }
+  else if (gravZ < 0 && gravY > 0)
+  {
+    return 270;
+  }
+}
+
+int calcOffsY()
+{
+  if (gravX > 0 && gravZ > 0)
+  {
+    return 0;
+  }
+  else if (gravX > 0 && gravZ < 0)
+  {
+    return 90;
+  }
+  else if (gravX < 0 && gravZ < 0)
+  {
+    return 180;
+  }
+  else if (gravX < 0 && gravZ > 0)
+  {
+    return 270;
+  }
+}
+
+int calcOffsZ()
+{
+  if (gravX > 0 && gravY > 0)
+  {
+    return 0;
+  }
+  else if (gravX > 0 && gravY < 0)
+  {
+    return 90;
+  }
+  else if (gravX < 0 && gravY < 0)
+  {
+    return 180;
+  }
+  else if (gravX < 0 && gravY > 0)
+  {
+    return 270;
+  }
 }
