@@ -109,6 +109,11 @@ void loop() {
   gravX = ax / 1638.4;
   gravY = ay / 1638.4;
   gravZ = az / 1638.4;
+
+  degreeX = atan(ax/sqrt(pow(ay,2) + pow(az,2)))*(180.0/3.14);
+  degreeY = atan(ay/sqrt(pow(ax,2) + pow(az,2)))*(180.0/3.14);
+  degreeZ = atan(ax/sqrt(pow(ax,2) + pow(ay,2)))*(180.0/3.14);
+  
   switch (read_LCD_buttons())
   {
     case btnSELECT:
@@ -128,7 +133,7 @@ void loop() {
       }*/
   }
 
-  if (changeFace == posDice)
+  /*if (changeFace == posDice)
   {
   }
   else {
@@ -264,7 +269,7 @@ int chooseFace()
     return OTRO;
   }
 
-}
+}*/
 
 
 /*                Count Timer             */
